@@ -15,14 +15,14 @@ import java.awt.event.MouseEvent;
 
 @SpringBootApplication
 @MapperScan(basePackages="net.skhu.mapper")
-public class SwingApp extends JFrame {
+public class JoinApp extends JFrame {
 
     @Autowired
     ClientMapper clientMapper;
 
     static JTextField name, age, phoneNumber, address;
 
-    public SwingApp() {
+    public JoinApp() {
         setTitle("회원가입");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         GridLayout grid = new GridLayout(5, 2);
@@ -68,12 +68,12 @@ public class SwingApp extends JFrame {
 
     public static void main(String[] args) {
 
-        ConfigurableApplicationContext ctx = new SpringApplicationBuilder(SwingApp.class)
+        ConfigurableApplicationContext ctx = new SpringApplicationBuilder(JoinApp.class)
                 .headless(false).run(args);
 
         EventQueue.invokeLater(() -> {
 
-            SwingApp ex = ctx.getBean(SwingApp.class);
+            JoinApp ex = ctx.getBean(JoinApp.class);
             ex.setVisible(true);
         });
 
