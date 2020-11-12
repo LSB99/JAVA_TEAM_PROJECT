@@ -15,17 +15,17 @@ import java.awt.event.MouseEvent;
 
 @SpringBootApplication
 @MapperScan(basePackages="net.skhu.mapper")
-public class SwingApp extends JFrame {
+public class JoinApp extends JFrame {
 
     @Autowired
     ClientMapper clientMapper;
 
-    static JTextField name, age, phoneNumber, address;
+    static JTextField name, age, phoneNumber, address, clientId, password;
 
-    public SwingApp() {
+    public JoinApp() {
         setTitle("회원가입");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        GridLayout grid = new GridLayout(5, 2);
+        GridLayout grid = new GridLayout(7, 2);
         grid.setVgap(5);
         Container c = getContentPane();
         c.setLayout(grid);
@@ -46,34 +46,63 @@ public class SwingApp extends JFrame {
         address = new JTextField(100);
         c.add(address);
 
+        c.add(new JLabel(" 아이디"));
+        clientId = new JTextField(30);
+        c.add(clientId);
+
+        c.add(new JLabel(" 비밀번호"));
+        password = new JPasswordField();
+        c.add(password);
+
         JButton joinBtn = new JButton("회원가입");
         c.add(joinBtn);
+        JButton resetBtn = new JButton("초기화");
+        c.add(resetBtn);
 
-        setSize(300, 200);
+        setSize(300, 300);
         setVisible(true);
 
         joinBtn.addMouseListener(new JoinAdapter());
+        resetBtn.addMouseListener(new ResetAdapter());
     }
 
     class JoinAdapter extends MouseAdapter {
+        @Override
         public void mousePressed(MouseEvent e) {
             Client client = new Client();
             client.setName(name.getText());
             client.setAge(age.getText());
             client.setPhoneNumber(phoneNumber.getText());
             client.setAddress(address.getText());
+            client.setClientId(clientId.getText());
+            client.setPassword(password.getText());
             clientMapper.insert(client);
+
+            JButton btn = (JButton) e.getSource();
+            btn.setText("회원가입 완료");
+        }
+    }
+
+    class ResetAdapter extends MouseAdapter {
+        @Override
+        public void mousePressed(MouseEvent e) {
+            name.setText("");
+            age.setText("");
+            phoneNumber.setText("");
+            address.setText("");
+            clientId.setText("");
+            password.setText("");
         }
     }
 
     public static void main(String[] args) {
 
-        ConfigurableApplicationContext ctx = new SpringApplicationBuilder(SwingApp.class)
+        ConfigurableApplicationContext ctx = new SpringApplicationBuilder(JoinApp.class)
                 .headless(false).run(args);
 
         EventQueue.invokeLater(() -> {
 
-            SwingApp ex = ctx.getBean(SwingApp.class);
+            JoinApp ex = ctx.getBean(JoinApp.class);
             ex.setVisible(true);
         });
 

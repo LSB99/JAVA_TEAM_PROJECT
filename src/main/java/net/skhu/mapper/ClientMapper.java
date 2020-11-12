@@ -13,10 +13,13 @@ public interface ClientMapper {
     @Select("SELECT * FROM client WHERE name = #{name}")
     Client findByName(String name);
 
+    @Select("SELECT * FROM client WHERE clientId = #{clientId}")
+    Client findById(String clientId);
+
     @Select("SELECT * FROM client")
     List<Client> findAll();
 
-    @Insert("INSERT client (name, age, phoneNumber, address) VALUES (#{name}, #{age}, #{phoneNumber}, #{address})")
+    @Insert("INSERT client (name, age, phoneNumber, address, clientId, password) VALUES (#{name}, #{age}, #{phoneNumber}, #{address}, #{clientId}, #{password})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void insert(Client client);
 
