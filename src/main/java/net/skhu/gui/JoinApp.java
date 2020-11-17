@@ -21,6 +21,7 @@ public class JoinApp extends JFrame {
     ClientMapper clientMapper;
 
     static JTextField name, age, phoneNumber, address, clientId, password;
+    static JLabel idLabel;
 
     public JoinApp() {
         setTitle("회원가입");
@@ -46,7 +47,8 @@ public class JoinApp extends JFrame {
         address = new JTextField(100);
         c.add(address);
 
-        c.add(new JLabel(" 아이디"));
+        idLabel = new JLabel(" 아이디");
+        c.add(idLabel);
         clientId = new JTextField(30);
         c.add(clientId);
 
@@ -59,7 +61,7 @@ public class JoinApp extends JFrame {
         JButton resetBtn = new JButton("초기화");
         c.add(resetBtn);
 
-        setSize(300, 300);
+        setSize(400, 400);
         setVisible(true);
 
         joinBtn.addMouseListener(new JoinAdapter());
@@ -76,10 +78,19 @@ public class JoinApp extends JFrame {
             client.setAddress(address.getText());
             client.setClientId(clientId.getText());
             client.setPassword(password.getText());
-            clientMapper.insert(client);
 
-            JButton btn = (JButton) e.getSource();
-            btn.setText("회원가입 완료");
+            if (clientMapper.findById(clientId.getText()).size() > 0) {
+                idLabel.setText("이미 존재하는 아이디입니다.");
+                idLabel.setForeground(Color.red);
+            } else {
+                clientMapper.insert(client);
+                idLabel.setText("아이디 중복 확인 성공");
+                idLabel.setForeground(Color.black);
+
+                JButton btn = (JButton) e.getSource();
+                btn.setText("회원가입 완료");
+            }
+
         }
     }
 

@@ -11,10 +11,10 @@ public interface ClientMapper {
     Client findOne(int id);
 
     @Select("SELECT * FROM client WHERE name = #{name}")
-    Client findByName(String name);
+    List<Client> findByName(String name);
 
     @Select("SELECT * FROM client WHERE clientId = #{clientId}")
-    Client findById(String clientId);
+    List<Client> findById(String clientId);
 
     @Select("SELECT * FROM client")
     List<Client> findAll();
