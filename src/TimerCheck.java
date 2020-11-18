@@ -23,6 +23,9 @@ public class TimerCheck extends JFrame implements Runnable{
 	
 	static String usehour; //  이용시간 변수
 	
+	static int cost; // 이용요금
+	
+	
 	Font font = new Font("맑은 고딕", Font.BOLD, 60);
 	Font font2 = new Font("맑은 고딕", Font.BOLD, 30);
 	
@@ -40,7 +43,7 @@ public class TimerCheck extends JFrame implements Runnable{
 	        
 	        c.setBackground(Color.BLACK);  
 	        
-	        title = new JLabel(" 이용시간을 입력하고 엔터를 치세요 (숫자만 입력하세요)");
+	        title = new JLabel(" 이용시간을 입력하세요 (숫자만 입력하세요)");
 	        
 	        
 	        title.setSize(550,80);
@@ -121,7 +124,7 @@ public class TimerCheck extends JFrame implements Runnable{
 	        	
 	        	String hour = e.getActionCommand();
 	            
-	        	int cost = 1000*Integer.parseInt(hour);
+	        	cost = 1000*Integer.parseInt(hour);
 	        	
 	        	moneylabel.setText(String.valueOf(cost)+" 원");
 	        	
@@ -129,16 +132,17 @@ public class TimerCheck extends JFrame implements Runnable{
 	        	    	
 	        }
 
-	 }	
+	 }
 	
 	
 	class timeaction extends MouseAdapter{
 		
+		@Override
 		public void mousePressed(MouseEvent e) {
-			
+
 			th.start();
-			
 		}
+	
 	}
 		
 	
@@ -153,15 +157,19 @@ public class TimerCheck extends JFrame implements Runnable{
 					 int sec = min * 60;
 			      	
 					   
-			     	 // 시작 시간
-			         long startTime = System.currentTimeMillis();
+			     	
+			        long startTime = System.currentTimeMillis();   // 시작 시간
 
 			         
-			         starttimelabel.setText("시작시간 : " + new TimerCheck().formatTime(startTime));
-		      	   
+			        String setStartTime = "시작시간 : " + new TimerCheck().formatTime(startTime);
+			         
 			         
 		      	   	for(int i=sec ; i>=0; i--){
 		      		   
+		      	   		
+		      	   		moneylabel.setText(String.valueOf(cost)+" 원");
+		      	   		
+		      	   		starttimelabel.setText(setStartTime);   // 시작 시간 출력
 		      		     
 		      		   	int h = i / 3600;
 		      		   
@@ -169,20 +177,21 @@ public class TimerCheck extends JFrame implements Runnable{
 		      		   
 		      		   	int s = i%60;
 		      		   
+		      		   	
 			                
 		      		   	timelabel.setText("남은 시간 : " + h +"시간 " + m + "분 " + s + "초" );
-			            	
-			            System.out.println("남은 시간 : " + h +"시간 " + m + "분 " + s + "초");
-			            	
+			          	
 			            Thread.sleep(1000);
 			            	
 			        }     
-		      	   
-		      	   	  // 종료 시간
-			         long endTime = System.currentTimeMillis();
+		      	   	
 
-			         // 시간 출력
-			         finishtimelabel.setText("종료시간 : " + new TimerCheck().formatTime(endTime));
+		      	   	  
+			         long endTime = System.currentTimeMillis();   // 종료 시간
+			         
+			         String setEndTime = "종료시간 : " + new TimerCheck().formatTime(endTime);
+			         
+			         finishtimelabel.setText(setEndTime);   // 종료 시간 출력
 		         	
 		     }
 	         
@@ -195,10 +204,11 @@ public class TimerCheck extends JFrame implements Runnable{
 	 public String formatTime(long lTime) {
 		 
 	        Calendar c = Calendar.getInstance();
+	        
 	        c.setTimeInMillis(lTime);
 	        
 	        String time = c.get(Calendar.HOUR_OF_DAY) + "시 " + c.get(Calendar.MINUTE) + "분 " +
-	                      c.get(Calendar.SECOND) + "." + c.get(Calendar.MILLISECOND) + "초";
+	                      c.get(Calendar.SECOND) +  "초";
 	        
 	        return time;
 	    }
@@ -209,6 +219,4 @@ public class TimerCheck extends JFrame implements Runnable{
 		 th = new Thread(new TimerCheck());
 	    
 	 }     
-    
-	   
 }   
