@@ -32,9 +32,9 @@ public class SearchApp extends JFrame {
     int id;
     int index = 0;
 
-    String [] header = { "id", "이름", "나이", "번호", "주소", "아이디"};
+    String [] header = { "이름", "나이", "번호", "주소", "아이디"};
     String [][] contents = {
-            { "id", "name", "age", "phoneNumber", "address", "clientId"},
+            { "name", "age", "phoneNumber", "address", "clientId"},
     };
 
     public SearchApp() {
@@ -100,12 +100,11 @@ public class SearchApp extends JFrame {
 
                     for (Client c : clientNameList) {
                         for(int i=0; i<clientNameList.size(); i++) {
-                            contents[i][0] = String.valueOf(c.getId());
-                            contents[i][1] = c.getName();
-                            contents[i][2] = c.getAge();
-                            contents[i][3] = c.getPhoneNumber();
-                            contents[i][4] = c.getAddress();
-                            contents[i][5] = c.getClientId();
+                            contents[i][0] = c.getName();
+                            contents[i][1] = c.getAge();
+                            contents[i][2] = c.getPhoneNumber();
+                            contents[i][3] = c.getAddress();
+                            contents[i][4] = c.getClientId();
 
                             model.setDataVector(contents, header);
                             label.setText("");
@@ -124,12 +123,11 @@ public class SearchApp extends JFrame {
 
                     for (Client c : clientIdList) {
                         for(int i=0; i<clientIdList.size(); i++) {
-                            contents[i][0] = String.valueOf(c.getId());
-                            contents[i][1] = c.getName();
-                            contents[i][2] = c.getAge();
-                            contents[i][3] = c.getPhoneNumber();
-                            contents[i][4] = c.getAddress();
-                            contents[i][5] = c.getClientId();
+                            contents[i][0] = c.getName();
+                            contents[i][1] = c.getAge();
+                            contents[i][2] = c.getPhoneNumber();
+                            contents[i][3] = c.getAddress();
+                            contents[i][4] = c.getClientId();
 
                             model.setDataVector(contents, header);
                             label.setText("");
