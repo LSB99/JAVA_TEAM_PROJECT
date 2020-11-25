@@ -6,6 +6,15 @@ public class Client {
     String age;
     String phoneNumber;
     String address;
+    String clientId;
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
 
     public int getId() {
         return id;

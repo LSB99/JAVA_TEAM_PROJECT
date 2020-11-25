@@ -16,7 +16,7 @@ public interface ClientMapper {
     @Select("SELECT * FROM client")
     List<Client> findAll();
 
-    @Select("SELECT * FROM client WHERE name = #{name}")
+    @Select("SELECT * FROM client WHERE name = #{clientId}")
     List<Client> findById(String clientId);
 
     @Insert("INSERT client (name, age, phoneNumber, address) VALUES (#{name}, #{age}, #{phoneNumber}, #{address})")

@@ -9,9 +9,13 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootApplication
@@ -21,48 +25,103 @@ public class SearchApp extends JFrame {
     @Autowired
     ClientMapper clientMapper;
 
-    static JTextField word;
-    static JRadioButton name, clientId;
+    String[] conditions = {"이름", "아이디"}; // 조회 조건
+    JTextField word;
+    JTable table;
+    JLabel label;
+    int index = 0;
+
+    String [] header = { "이름", "나이", "번호", "주소", "ID"};
+    String [][] contents = {
+            { "name", "age", "phoneNumber", "address", "clientId"},
+    };
 
     public SearchApp() {
         setTitle("회원 조회");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        GridLayout grid = new GridLayout(1, 4);
-        grid.setVgap(5);
+        setLayout(null);
         Container c = getContentPane();
-        c.setLayout(grid);
 
-        ButtonGroup g = new ButtonGroup();
-        name = new JRadioButton("이름");
-        clientId = new JRadioButton("아이디");
+        JComboBox<String> strCombo = new JComboBox<String>(conditions);
+        strCombo.setBounds(50, 10, 100, 30);
+        c.add(strCombo);
 
-        g.add(name);
-        g.add(clientId);
-
-        c.add(name);
-        c.add(clientId);
+        label = new JLabel("");
+        label.setBounds(60, 70, 200, 30);
+        c.add(label);
 
         word = new JTextField(20);
+        word.setBounds(151, 10, 160, 30);
         c.add(word);
-        JButton searchBtn = new JButton("검색");
+        JButton searchBtn = new JButton("조회");
+        searchBtn.setBounds(312, 10, 80, 30);
         c.add(searchBtn);
 
-        setSize(400, 400);
+        DefaultTableModel model = new DefaultTableModel(contents, header);
+        table = new JTable(model);
+
+        table.setFillsViewportHeight(true);
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        JScrollPane scrollPane = new JScrollPane(table);
+        scrollPane.setBounds(10,120,450,300);
+
+        c.add(scrollPane);
+        setSize(500, 500);
         setVisible(true);
 
-        searchBtn.addMouseListener(new SearchAdapter());
-    }
+        searchBtn.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+                if (index == 0) { // 이름으로 조회
+                    List<Client> clientNameList = clientMapper.findByName(word.getText());
 
-    class SearchAdapter extends MouseAdapter {
-        public void mousePressed(MouseEvent e) {
-            if(name.isSelected()) {
-                List<Client> clients = clientMapper.findByName(word.getText());
-            } else if (clientId.isSelected()) {
-                List<Client> clients = clientMapper.findById(word.getText());
-            } else {
-                List<Client> clients = clientMapper.findAll();
+                    if(clientNameList.size() == 0)
+                        label.setText("존재하지 않는 회원입니다.");
+
+                    for (Client c : clientNameList) {
+                        for(int i=0; i<clientNameList.size(); i++) {
+                            contents[i][0] = c.getName();
+                            contents[i][1] = c.getAge();
+                            contents[i][2] = c.getPhoneNumber();
+                            contents[i][3] = c.getAddress();
+                            contents[i][4] = c.getClientId();
+
+                            model.setDataVector(contents, header);
+                            label.setText("");
+                            word.setText("");
+                        }
+                    }
+
+                } else if (index == 1) { // 아이디로 조회
+                    List<Client> clientIdList = clientMapper.findById(word.getText());
+
+                    if(clientIdList.size() == 0)
+                        label.setText("존재하지 않는 회원입니다.");
+
+                    for (Client c : clientIdList) {
+                        for(int i=0; i<clientIdList.size(); i++) {
+                            contents[i][0] = c.getName();
+                            contents[i][1] = c.getAge();
+                            contents[i][2] = c.getPhoneNumber();
+                            contents[i][3] = c.getAddress();
+                            contents[i][4] = c.getClientId();
+
+                            model.setDataVector(contents, header);
+                            label.setText("");
+                            word.setText("");
+                        }
+                    }
+
+                }
             }
-        }
+        });
+
+        strCombo.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JComboBox<String> cb = (JComboBox) e.getSource();
+                index = cb.getSelectedIndex();
+            }
+        });
     }
 
     public static void main(String[] args) {
