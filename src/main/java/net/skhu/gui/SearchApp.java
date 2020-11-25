@@ -29,11 +29,12 @@ public class SearchApp extends JFrame {
     JTextField word;
     JTable table;
     JLabel label;
+    int id;
     int index = 0;
 
-    String [] header = { "이름", "나이", "번호", "주소", "ID"};
+    String [] header = { "id", "이름", "나이", "번호", "주소", "아이디"};
     String [][] contents = {
-            { "name", "age", "phoneNumber", "address", "clientId"},
+            { "id", "name", "age", "phoneNumber", "address", "clientId"},
     };
 
     public SearchApp() {
@@ -54,8 +55,11 @@ public class SearchApp extends JFrame {
         word.setBounds(151, 10, 160, 30);
         c.add(word);
         JButton searchBtn = new JButton("조회");
-        searchBtn.setBounds(312, 10, 80, 30);
+        searchBtn.setBounds(312, 10, 70, 30);
         c.add(searchBtn);
+        JButton removeBtn = new JButton("삭제");
+        removeBtn.setBounds(383, 10, 70, 30);
+        c.add(removeBtn);
 
         DefaultTableModel model = new DefaultTableModel(contents, header);
         table = new JTable(model);
@@ -70,48 +74,69 @@ public class SearchApp extends JFrame {
         setSize(500, 500);
         setVisible(true);
 
+        removeBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(table.getSelectedRow() == -1) { // 아무것도 선택하지 않고 버튼을 눌렀을 때
+                    return;
+                } else {
+                    model.removeRow(table.getSelectedRow()); // 선택열 삭제
+                    clientMapper.delete(id); // db에서도 삭제
+                    label.setText("회원 삭제 완료.");
+                    label.setForeground(Color.BLACK);
+                }
+            }
+        });
+
         searchBtn.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
                 if (index == 0) { // 이름으로 조회
                     List<Client> clientNameList = clientMapper.findByName(word.getText());
 
-                    if(clientNameList.size() == 0)
+                    if(clientNameList.size() == 0) {
                         label.setText("존재하지 않는 회원입니다.");
+                        label.setForeground(Color.red);
+                    }
 
                     for (Client c : clientNameList) {
                         for(int i=0; i<clientNameList.size(); i++) {
-                            contents[i][0] = c.getName();
-                            contents[i][1] = c.getAge();
-                            contents[i][2] = c.getPhoneNumber();
-                            contents[i][3] = c.getAddress();
-                            contents[i][4] = c.getClientId();
+                            contents[i][0] = String.valueOf(c.getId());
+                            contents[i][1] = c.getName();
+                            contents[i][2] = c.getAge();
+                            contents[i][3] = c.getPhoneNumber();
+                            contents[i][4] = c.getAddress();
+                            contents[i][5] = c.getClientId();
 
                             model.setDataVector(contents, header);
                             label.setText("");
-                            word.setText("");
                         }
+
+                        id = c.getId();
                     }
 
                 } else if (index == 1) { // 아이디로 조회
                     List<Client> clientIdList = clientMapper.findById(word.getText());
 
-                    if(clientIdList.size() == 0)
+                    if(clientIdList.size() == 0) {
                         label.setText("존재하지 않는 회원입니다.");
+                        label.setForeground(Color.red);
+                    }
 
                     for (Client c : clientIdList) {
                         for(int i=0; i<clientIdList.size(); i++) {
-                            contents[i][0] = c.getName();
-                            contents[i][1] = c.getAge();
-                            contents[i][2] = c.getPhoneNumber();
-                            contents[i][3] = c.getAddress();
-                            contents[i][4] = c.getClientId();
+                            contents[i][0] = String.valueOf(c.getId());
+                            contents[i][1] = c.getName();
+                            contents[i][2] = c.getAge();
+                            contents[i][3] = c.getPhoneNumber();
+                            contents[i][4] = c.getAddress();
+                            contents[i][5] = c.getClientId();
 
                             model.setDataVector(contents, header);
                             label.setText("");
-                            word.setText("");
                         }
-                    }
 
+                        id = c.getId();
+                    }
                 }
             }
         });
