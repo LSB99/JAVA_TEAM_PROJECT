@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import static javax.swing.JOptionPane.showMessageDialog;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -20,8 +21,7 @@ public class JoinApp extends JFrame {
     @Autowired
     ClientMapper clientMapper;
 
-    static JTextField name, age, phoneNumber, address, clientId, password;
-    static JLabel idLabel;
+    JTextField name, age, phoneNumber, address, clientId, password;
 
     public JoinApp() {
         setTitle("회원가입");
@@ -47,8 +47,7 @@ public class JoinApp extends JFrame {
         address = new JTextField(100);
         c.add(address);
 
-        idLabel = new JLabel(" 아이디");
-        c.add(idLabel);
+        c.add(new JLabel(" 아이디"));
         clientId = new JTextField(30);
         c.add(clientId);
 
@@ -79,16 +78,15 @@ public class JoinApp extends JFrame {
             client.setClientId(clientId.getText());
             client.setPassword(password.getText());
 
-            if (clientMapper.findById(clientId.getText()).size() > 0) {
-                idLabel.setText("이미 존재하는 아이디입니다.");
-                idLabel.setForeground(Color.red);
+            if (name.getText().isEmpty() || age.getText().isEmpty() || phoneNumber.getText().isEmpty() || address.getText().isEmpty() || clientId.getText().isEmpty() || password.getText().isEmpty()) {
+                showMessageDialog(null, "내용을 입력하세요.");
+
+            } else if (clientMapper.findById(clientId.getText()).size() > 0) {
+                showMessageDialog(null, "중복된 아이디입니다.");
+
             } else {
                 clientMapper.insert(client);
-                idLabel.setText("아이디 중복 확인 성공");
-                idLabel.setForeground(Color.black);
-
-                JButton btn = (JButton) e.getSource();
-                btn.setText("회원가입 완료");
+                showMessageDialog(null, "회원가입에 성공했습니다.");
             }
 
         }

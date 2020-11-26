@@ -15,7 +15,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootApplication
@@ -42,7 +41,7 @@ public class SearchApp extends JFrame {
         setLayout(null);
         Container c = getContentPane();
 
-        JComboBox<String> strCombo = new JComboBox<String>(conditions);
+        JComboBox<String> strCombo = new JComboBox<>(conditions);
         strCombo.setBounds(10, 10, 80, 30);
         c.add(strCombo);
 
