@@ -10,12 +10,12 @@ import org.springframework.context.ConfigurableApplicationContext;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootApplication
@@ -25,17 +25,15 @@ public class SearchApp extends JFrame {
     @Autowired
     ClientMapper clientMapper;
 
-    String[] conditions = {"이름", "아이디"}; // 조회 조건
+    String[] conditions = {"전체", "이름", "아이디"}; // 조회 조건
     JTextField word;
     JTable table;
     JLabel label;
-    int id;
     int index = 0;
 
-    String [] header = { "이름", "나이", "번호", "주소", "아이디"};
-    String [][] contents = {
-            { "name", "age", "phoneNumber", "address", "clientId"},
-    };
+    String [] header = { "id", "이름", "나이", "번호", "주소", "아이디"};
+    String [][] contents = new String[50][6]; // 전체 조회한 결과를 담을 배열
+    String [][] result = new String[50][6]; // 조건으로 조회한 결과를 담을 배열
 
     public SearchApp() {
         setTitle("회원 조회");
@@ -44,15 +42,15 @@ public class SearchApp extends JFrame {
         Container c = getContentPane();
 
         JComboBox<String> strCombo = new JComboBox<String>(conditions);
-        strCombo.setBounds(50, 10, 100, 30);
+        strCombo.setBounds(10, 10, 80, 30);
         c.add(strCombo);
 
         label = new JLabel("");
-        label.setBounds(60, 70, 200, 30);
+        label.setBounds(50, 70, 200, 30);
         c.add(label);
 
         word = new JTextField(20);
-        word.setBounds(151, 10, 160, 30);
+        word.setBounds(91, 10, 221, 30);
         c.add(word);
         JButton searchBtn = new JButton("조회");
         searchBtn.setBounds(312, 10, 70, 30);
@@ -81,6 +79,8 @@ public class SearchApp extends JFrame {
                     return;
                 } else {
                     model.removeRow(table.getSelectedRow()); // 선택열 삭제
+                    int row = table.getSelectedRow();
+                    int id = Integer.parseInt((String) model.getValueAt(row,0));
                     clientMapper.delete(id); // db에서도 삭제
                     label.setText("회원 삭제 완료.");
                     label.setForeground(Color.BLACK);
@@ -90,7 +90,25 @@ public class SearchApp extends JFrame {
 
         searchBtn.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
-                if (index == 0) { // 이름으로 조회
+                if (index == 0) { // 전체 조회
+                    List<Client> clientList = clientMapper.findAll();
+
+                    int i=0;
+                    for (Client c : clientList) {
+                        contents[i][0] = String.valueOf(c.getId());
+                        contents[i][1] = c.getName();
+                        contents[i][2] = c.getAge();
+                        contents[i][3] = c.getPhoneNumber();
+                        contents[i][4] = c.getAddress();
+                        contents[i][5] = c.getClientId();
+
+                        i++;
+                    }
+                    model.setDataVector(contents, header);
+                    label.setText("");
+                }
+
+                if (index == 1) { // 이름으로 조회
                     List<Client> clientNameList = clientMapper.findByName(word.getText());
 
                     if(clientNameList.size() == 0) {
@@ -98,22 +116,21 @@ public class SearchApp extends JFrame {
                         label.setForeground(Color.red);
                     }
 
+                    int i=0;
                     for (Client c : clientNameList) {
-                        for(int i=0; i<clientNameList.size(); i++) {
-                            contents[i][0] = c.getName();
-                            contents[i][1] = c.getAge();
-                            contents[i][2] = c.getPhoneNumber();
-                            contents[i][3] = c.getAddress();
-                            contents[i][4] = c.getClientId();
+                        result[i][0] = String.valueOf(c.getId());
+                        result[i][1] = c.getName();
+                        result[i][2] = c.getAge();
+                        result[i][3] = c.getPhoneNumber();
+                        result[i][4] = c.getAddress();
+                        result[i][5] = c.getClientId();
 
-                            model.setDataVector(contents, header);
-                            label.setText("");
-                        }
-
-                        id = c.getId();
+                        i++;
                     }
+                    model.setDataVector(result, header);
+                    label.setText("");
 
-                } else if (index == 1) { // 아이디로 조회
+                } else if (index == 2) { // 아이디로 조회
                     List<Client> clientIdList = clientMapper.findById(word.getText());
 
                     if(clientIdList.size() == 0) {
@@ -121,20 +138,19 @@ public class SearchApp extends JFrame {
                         label.setForeground(Color.red);
                     }
 
+                    int i=0;
                     for (Client c : clientIdList) {
-                        for(int i=0; i<clientIdList.size(); i++) {
-                            contents[i][0] = c.getName();
-                            contents[i][1] = c.getAge();
-                            contents[i][2] = c.getPhoneNumber();
-                            contents[i][3] = c.getAddress();
-                            contents[i][4] = c.getClientId();
+                        result[i][0] = String.valueOf(c.getId());
+                        result[i][1] = c.getName();
+                        result[i][2] = c.getAge();
+                        result[i][3] = c.getPhoneNumber();
+                        result[i][4] = c.getAddress();
+                        result[i][5] = c.getClientId();
 
-                            model.setDataVector(contents, header);
-                            label.setText("");
-                        }
-
-                        id = c.getId();
+                        i++;
                     }
+                    model.setDataVector(result, header);
+                    label.setText("");
                 }
             }
         });
