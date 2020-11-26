@@ -1,4 +1,4 @@
-package net.skhu.checkTime;
+package checkTime;
 
 import java.awt.Color;
 import java.awt.Container;

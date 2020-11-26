@@ -1,4 +1,4 @@
-package net.shku.checkMoney;
+package checkMoney;
 
 import java.awt.Color;
 import java.awt.Container;
