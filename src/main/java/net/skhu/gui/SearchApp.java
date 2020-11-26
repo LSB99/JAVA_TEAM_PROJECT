@@ -101,9 +101,9 @@ public class SearchApp extends JFrame {
                         contents[i][4] = c.getClientId();
 
                         model.setDataVector(contents, header);
+                        label.setText("");
                         i++;
                     }
-                    label.setText("");
 
                 }
                 if (index == 1) { // 이름으로 조회
@@ -124,12 +124,17 @@ public class SearchApp extends JFrame {
 
                         id = c.getId();
                         model.setDataVector(result, header);
+                        label.setText("");
                         i++;
                     }
-                    label.setText("");
 
                 } else if (index == 2) { // 아이디로 조회
                     List<Client> clientIdList = clientMapper.findById(word.getText());
+
+                    if(clientIdList.size() == 0) {
+                        label.setText("존재하지 않는 회원입니다.");
+                        label.setForeground(Color.red);
+                    }
 
                     int i = 0;
                     for (Client c : clientIdList) {
@@ -141,9 +146,9 @@ public class SearchApp extends JFrame {
 
                         id = c.getId();
                         model.setDataVector(result, header);
+                        label.setText("");
                         i++;
                     }
-                    label.setText("");
                 }
             }
         });
