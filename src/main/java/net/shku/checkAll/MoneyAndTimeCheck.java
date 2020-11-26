@@ -7,8 +7,8 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.Calendar;
 
 import javax.swing.JButton;
@@ -159,7 +159,7 @@ public class MoneyAndTimeCheck extends JFrame {
 		     startbutton.setHorizontalAlignment(SwingConstants.CENTER);
 		     startbutton.setBackground(Color.RED);
 		     startbutton.setForeground(Color.white);
-		     startbutton.addMouseListener(new timeaction());
+		     startbutton.addMouseListener(new Timeaction());
 		     c.add(startbutton);
 
 
@@ -197,76 +197,81 @@ public class MoneyAndTimeCheck extends JFrame {
 	 }
 
 
-	class timeaction implements MouseListener , Runnable {
-
+	class Timeaction extends MouseAdapter {
 
 		@Override
 		public void mousePressed(MouseEvent e) {
 
-			th = new Thread(new timeaction());
+			th = new Thread(new TimerStart());
 
 			th.start();
+
 		}
+	}
+
+
+	class TimerStart implements Runnable{
+
 
 		@Override
-		 public void run() {
+		public void run() {
 
 
-				    try {
+			  try {
 
-				    	 int min = Integer.parseInt(usehour) * 60;
+			    	 int min = Integer.parseInt(usehour) * 60;
 
-						 int sec = min * 60;
-
-
-						 // 시작 시간
-				         long startTime = System.currentTimeMillis();
-
-
-				        starttimelabel.setText("시작시간 :     " + formatTime(startTime));
-
-			      	   	for(int i=sec ; i>=0; i--){
-
-
-			      		   	int h = i / 3600;
-
-			      		   	int m = (i%3600)/60;
-
-			      		   	int s = i%60;
-
-
-			      		   	timelabel.setText("남은 시간 :     " + h +"시간 " + m + "분 " + s + "초" );
-
-				            Thread.sleep(1000);
-
-				        }
-
-			      	  // 종료 시간
-				         long endTime = System.currentTimeMillis();
-
-				         // 시간 출력
-				         finishtimelabel.setText("종료시간 :    " + formatTime(endTime));
+					 int sec = min * 60;
 
 
 
-				         // 시간종료가 되었으므로  DB에  이용요금과   이용가능한 시간을 초기화한다.
+			         long startTime = System.currentTimeMillis();  // 시작 시간
 
-				         Client client = new Client();
 
-						 client.setClientId(clientId.getText());
-				         client.setTime("0");
-				         client.setMoney("0원");
+			        starttimelabel.setText("시작시간 :     " + formatTime(startTime));
 
-				         clientMapper.update(client);
+		      	   	for(int i=sec ; i>=0; i--){
 
-			     }
 
-		         catch(Exception e1) {
+		      		   	int h = i / 3600;
 
-		         	e1.printStackTrace();
-		         }
-		   }
+		      		   	int m = (i%3600)/60;
 
+		      		   	int s = i%60;
+
+
+		      		   	timelabel.setText("남은 시간 :     " + h +"시간 " + m + "분 " + s + "초" );
+
+			            Thread.sleep(1000);
+
+			        }
+
+
+			         long endTime = System.currentTimeMillis();  // 종료 시간
+
+
+			         finishtimelabel.setText("종료시간 :    " + formatTime(endTime));   // 시간 출력
+
+
+
+			         // 시간종료가 되었으므로  DB에  이용요금과   이용가능한 시간을 초기화한다.
+
+			         Client client = new Client();
+
+					 client.setClientId(clientId.getText());
+			         client.setTime("0");
+			         client.setMoney("0원");
+
+			         clientMapper.update(client);
+
+		     }
+
+
+			 catch(Exception e1) {
+
+				 e1.printStackTrace();
+			 }
+		}
 
 
 		public String formatTime(long lTime) {
@@ -274,37 +279,12 @@ public class MoneyAndTimeCheck extends JFrame {
 	        Calendar c = Calendar.getInstance();
 	        c.setTimeInMillis(lTime);
 
-	        String time = c.get(Calendar.HOUR_OF_DAY) + "시 " + c.get(Calendar.MINUTE) + "분 " +
-                    c.get(Calendar.SECOND) + "초";
+	        String time = c.get(Calendar.HOUR_OF_DAY) + "시 " + c.get(Calendar.MINUTE) + "분 " + c.get(Calendar.SECOND) + "초";
 
 	        return time;
 	    }
-
-
-		@Override
-		public void mouseClicked(MouseEvent e) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void mouseEntered(MouseEvent e) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void mouseExited(MouseEvent e) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void mouseReleased(MouseEvent e) {
-			// TODO Auto-generated method stub
-
-		}
 	}
+
 
 	 public static void main(String[] args) {
 
@@ -316,6 +296,7 @@ public class MoneyAndTimeCheck extends JFrame {
 	            MoneyAndTimeCheck ex = ctx.getBean(MoneyAndTimeCheck.class);
 	            ex.setVisible(true);
 	        });
-
 	 }
 }
+
+

@@ -122,101 +122,103 @@ public class TimerCheck extends JFrame {
 	 }
 
 
-	public class TimeAction implements ActionListener , Runnable{
+	class TimeAction implements ActionListener {
 
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
 
 
-			String hour = e.getActionCommand();
+			String clientInformation = e.getActionCommand();
 
 
-			client = clientMapper.findByclientId(hour);
+			client = clientMapper.findByclientId(clientInformation);
 
 
 			usehour = client.getTime();
 
 
-			th = new Thread(new TimeAction());
+			th = new Thread(new TimerStart());
 
 			th.start();
 
 		}
+	}
 
 
-		 @Override
-		 public void run() {
-
-				    try {
-
-				    	 int min = Integer.parseInt(usehour) * 60;
-
-						 int sec = min * 60;
+	class TimerStart implements Runnable{
 
 
-						 // 시작 시간
-				         long startTime = System.currentTimeMillis();
+		@Override
+		public void run() {
 
 
-				         starttimelabel.setText("시작시간 :   " + formatTime(startTime));
+			  try {
 
+			    	 int min = Integer.parseInt(usehour) * 60;
 
-			      	   	for(int i=sec ; i>=0; i--){
-
-
-			      		   	int h = i / 3600;
-
-			      		   	int m = (i%3600)/60;
-
-			      		   	int s = i%60;
-
-
-			      		   	timelabel.setText("남은 시간 :   " + h +"시간 " + m + "분 " + s + "초" );
-
-				            Thread.sleep(1000);
-
-				        }
-
-			      	  // 종료 시간
-				         long endTime = System.currentTimeMillis();
-
-				         // 시간 출력
-				         finishtimelabel.setText("종료시간 : " + formatTime(endTime));
+					 int sec = min * 60;
 
 
 
-				         // 시간종료가 되었으므로  DB에  이용요금과   이용가능한 시간을 초기화한다.
-
-				         Client client = new Client();
-
-						 client.setClientId(clientId.getText());
-				         client.setTime("0");
-				         client.setMoney("0원");
-
-				         clientMapper.update(client);
+			         long startTime = System.currentTimeMillis();  // 시작 시간
 
 
-			     }
+			        starttimelabel.setText("시작시간 :     " + formatTime(startTime));
 
-		         catch(Exception e1) {
-
-		         	e1.printStackTrace();
-		         }
-		   }
+		      	   	for(int i=sec ; i>=0; i--){
 
 
+		      		   	int h = i / 3600;
 
-		 public String formatTime(long lTime) {
+		      		   	int m = (i%3600)/60;
 
-		        Calendar c = Calendar.getInstance();
-		        c.setTimeInMillis(lTime);
+		      		   	int s = i%60;
 
-		        String time = c.get(Calendar.HOUR_OF_DAY) + "시 " + c.get(Calendar.MINUTE) + "분 " +
-	                    c.get(Calendar.SECOND) + "초";
 
-		        return time;
-		 }
+		      		   	timelabel.setText("남은 시간 :     " + h +"시간 " + m + "분 " + s + "초" );
+
+			            Thread.sleep(1000);
+
+			        }
+
+
+			         long endTime = System.currentTimeMillis();  // 종료 시간
+
+
+			         finishtimelabel.setText("종료시간 :    " + formatTime(endTime));  // 시간 출력
+
+
+
+			         // 시간종료가 되었으므로  DB에  이용요금과   이용가능한 시간을 초기화한다.
+
+			         Client client = new Client();
+
+					 client.setClientId(clientId.getText());
+			         client.setTime("0");
+			         client.setMoney("0원");
+
+			         clientMapper.update(client);
+
+		     }
+
+
+			 catch(Exception e1) {
+
+				 e1.printStackTrace();
+			 }
+		}
+
+
+		public String formatTime(long lTime) {
+
+	        Calendar c = Calendar.getInstance();
+	        c.setTimeInMillis(lTime);
+
+	        String time = c.get(Calendar.HOUR_OF_DAY) + "시 " + c.get(Calendar.MINUTE) + "분 " + c.get(Calendar.SECOND) + "초";
+
+	        return time;
+	    }
 	}
 
 
@@ -230,6 +232,5 @@ public class TimerCheck extends JFrame {
 	            TimerCheck ex = ctx.getBean(TimerCheck.class);
 	            ex.setVisible(true);
 	        });
-
 	 }
 }
