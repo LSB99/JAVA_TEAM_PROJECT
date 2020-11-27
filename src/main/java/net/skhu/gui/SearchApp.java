@@ -17,6 +17,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
 
+import static javax.swing.JOptionPane.showMessageDialog;
+
 @SpringBootApplication
 @MapperScan(basePackages="net.skhu.mapper")
 public class SearchApp extends JFrame {
@@ -27,7 +29,6 @@ public class SearchApp extends JFrame {
     String[] conditions = {"전체", "이름", "아이디"}; // 조회 조건
     JTextField word;
     JTable table;
-    JLabel label;
     int id;
     int index = 0;
 
@@ -44,10 +45,6 @@ public class SearchApp extends JFrame {
         JComboBox<String> strCombo = new JComboBox<>(conditions);
         strCombo.setBounds(10, 10, 80, 30);
         c.add(strCombo);
-
-        label = new JLabel("");
-        label.setBounds(50, 70, 200, 30);
-        c.add(label);
 
         word = new JTextField(20);
         word.setBounds(91, 10, 226, 30);
@@ -66,7 +63,7 @@ public class SearchApp extends JFrame {
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setBounds(10,120,450,300);
+        scrollPane.setBounds(10,70,450,350);
 
         c.add(scrollPane);
         setSize(500, 500);
@@ -80,8 +77,7 @@ public class SearchApp extends JFrame {
                 } else {
                     model.removeRow(table.getSelectedRow()); // 선택열 삭제
                     clientMapper.delete(id); // db에서도 삭제
-                    label.setText("회원 삭제 완료.");
-                    label.setForeground(Color.BLACK);
+                    showMessageDialog(null, "회원 삭제 완료");
                 }
             }
         });
@@ -100,7 +96,6 @@ public class SearchApp extends JFrame {
                         contents[i][4] = c.getClientId();
 
                         model.setDataVector(contents, header);
-                        label.setText("");
                         i++;
                     }
 
@@ -109,8 +104,7 @@ public class SearchApp extends JFrame {
                     List<Client> clientNameList = clientMapper.findByName(word.getText());
 
                     if(clientNameList.size() == 0) {
-                        label.setText("존재하지 않는 회원입니다.");
-                        label.setForeground(Color.red);
+                        showMessageDialog(null, "존재하지 않는 회원입니다.");
                     }
 
                     int i=0;
@@ -123,7 +117,6 @@ public class SearchApp extends JFrame {
 
                         id = c.getId();
                         model.setDataVector(result, header);
-                        label.setText("");
                         i++;
                     }
 
@@ -131,8 +124,7 @@ public class SearchApp extends JFrame {
                     List<Client> clientIdList = clientMapper.findById(word.getText());
 
                     if(clientIdList.size() == 0) {
-                        label.setText("존재하지 않는 회원입니다.");
-                        label.setForeground(Color.red);
+                        showMessageDialog(null, "존재하지 않는 회원입니다.");
                     }
 
                     int i = 0;
@@ -145,7 +137,6 @@ public class SearchApp extends JFrame {
 
                         id = c.getId();
                         model.setDataVector(result, header);
-                        label.setText("");
                         i++;
                     }
                 }
