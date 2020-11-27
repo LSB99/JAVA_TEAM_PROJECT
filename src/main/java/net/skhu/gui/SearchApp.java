@@ -11,8 +11,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
@@ -69,16 +67,13 @@ public class SearchApp extends JFrame {
         setSize(500, 500);
         setVisible(true);
 
-        removeBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if(table.getSelectedRow() == -1) { // 아무것도 선택하지 않고 버튼을 눌렀을 때
-                    return;
-                } else {
-                    model.removeRow(table.getSelectedRow()); // 선택열 삭제
-                    clientMapper.delete(id); // db에서도 삭제
-                    showMessageDialog(null, "회원 삭제 완료");
-                }
+        removeBtn.addActionListener(e -> {
+            if(table.getSelectedRow() == -1) { // 아무것도 선택하지 않고 버튼을 눌렀을 때
+                return;
+            } else {
+                model.removeRow(table.getSelectedRow()); // 선택열 삭제
+                clientMapper.delete(id); // db에서도 삭제
+                showMessageDialog(null, "회원 삭제 완료");
             }
         });
 
@@ -143,11 +138,9 @@ public class SearchApp extends JFrame {
             }
         });
 
-        strCombo.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                JComboBox<String> cb = (JComboBox) e.getSource();
-                index = cb.getSelectedIndex();
-            }
+        strCombo.addActionListener(e -> {
+            JComboBox<String> cb = (JComboBox) e.getSource();
+            index = cb.getSelectedIndex();
         });
     }
 
