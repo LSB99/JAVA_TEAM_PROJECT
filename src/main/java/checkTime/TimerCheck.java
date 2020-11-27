@@ -254,7 +254,7 @@ public class TimerCheck extends JFrame {
 
 			         // 시간종료가 되었으므로  DB에  이용요금과   이용가능한 시간을 초기화한다.
 
-			         client.setTime("0");
+			         client.setTime("0시간");
 
 			         client.setMoney("0원");
 
