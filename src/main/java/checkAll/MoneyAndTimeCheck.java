@@ -1,5 +1,10 @@
 package checkAll;
 
+
+/* 회원아이디를 입력하고  이용시간을 입력해서  이용요금을  구하고  그 정보를   DB에 저장한다.
+
+       그리고  시작버튼을  누르면  타이머가  시작된다.  */
+
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.EventQueue;
@@ -23,11 +28,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import net.skhu.dto.Client;
-import net.skhu.mapper.ClientMapper;
+import ClientDTO.Client;
+import ClientMapper.ClientMapper;
 
 @SpringBootApplication
-@MapperScan(basePackages="net.skhu.mapper")
+@MapperScan(basePackages="ClientMapper")
 
 public class MoneyAndTimeCheck extends JFrame {
 
@@ -38,7 +43,9 @@ public class MoneyAndTimeCheck extends JFrame {
 	static JTextField clientId;
 
 	static JTextField hour;
+
 	static JLabel title;
+
 	static JLabel moneylabel;
 
 	static JLabel starttimelabel;
@@ -63,7 +70,8 @@ public class MoneyAndTimeCheck extends JFrame {
 
 	 public MoneyAndTimeCheck() {
 
-	        setTitle("이용시간 체크");
+	        setTitle("이용요금과  이용시간 체크");
+
 	        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 	        Container c = getContentPane();
@@ -184,12 +192,14 @@ public class MoneyAndTimeCheck extends JFrame {
 	        	usehour = hour;
 
 
-	        	Client client = new Client();
+	        	Client client = clientMapper.findByclientId(clientId.getText());  //  입력한 회원아이디로  조회
 
+	            client.setTime(hour+"시간");
 
-	        	client.setClientId(clientId.getText());
-	            client.setTime(hour);
 	            client.setMoney(moneylabel.getText());
+
+	            client.setStartDate("");
+	            client.setEndDate("");
 
 	            clientMapper.update(client);
 	        }
@@ -217,6 +227,9 @@ public class MoneyAndTimeCheck extends JFrame {
 		public void run() {
 
 
+			Client client = clientMapper.findByclientId(clientId.getText());  //  입력한 회원아이디로  조회
+
+
 			  try {
 
 			    	 int min = Integer.parseInt(usehour) * 60;
@@ -230,6 +243,12 @@ public class MoneyAndTimeCheck extends JFrame {
 
 			        starttimelabel.setText("시작시간 :     " + formatTime(startTime));
 
+
+			        client.setStartDate( formatDate(startTime) + formatTime(startTime) );
+
+			        clientMapper.update(client);
+
+
 		      	   	for(int i=sec ; i>=0; i--){
 
 
@@ -240,7 +259,14 @@ public class MoneyAndTimeCheck extends JFrame {
 		      		   	int s = i%60;
 
 
-		      		   	timelabel.setText("남은 시간 :     " + h +"시간 " + m + "분 " + s + "초" );
+		      		   	timelabel.setText("남은 시간 :     " + h +"시간  " + m + "분  " + s + "초" );
+
+
+				        client.setTime(h +"시간 " + m + "분 " + s + "초");
+
+				        client.setMoney(moneylabel.getText());
+
+				        clientMapper.update(client);
 
 			            Thread.sleep(1000);
 
@@ -256,11 +282,11 @@ public class MoneyAndTimeCheck extends JFrame {
 
 			         // 시간종료가 되었으므로  DB에  이용요금과   이용가능한 시간을 초기화한다.
 
-			         Client client = new Client();
-
-					 client.setClientId(clientId.getText());
 			         client.setTime("0");
+
 			         client.setMoney("0원");
+
+			         client.setEndDate( formatDate(endTime) + formatTime(endTime));
 
 			         clientMapper.update(client);
 
@@ -274,7 +300,7 @@ public class MoneyAndTimeCheck extends JFrame {
 		}
 
 
-		public String formatTime(long lTime) {
+		public String formatTime(long lTime) {     //  현재 시분초  출력
 
 	        Calendar c = Calendar.getInstance();
 	        c.setTimeInMillis(lTime);
@@ -283,6 +309,21 @@ public class MoneyAndTimeCheck extends JFrame {
 
 	        return time;
 	    }
+
+
+		public String formatDate(long lTime) {    //  현재  년 , 월  , 일   출력
+
+
+			Calendar c = Calendar.getInstance();
+
+			int month = c.get(Calendar.MONTH)+1;
+
+	        String date = c.get(Calendar.YEAR)+"년  " + month +"월  " + c.get(Calendar.DAY_OF_MONTH) +"일   ";
+
+	        return date;
+
+		}
+
 	}
 
 

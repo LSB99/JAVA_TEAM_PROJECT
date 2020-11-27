@@ -1,5 +1,8 @@
 package checkMoney;
 
+
+/* 회원아이디를 입력하고  이용시간을 입력해서  이용요금을  구하고  그 정보를   DB에 저장한다. */
+
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.EventQueue;
@@ -19,11 +22,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import net.skhu.dto.Client;
-import net.skhu.mapper.ClientMapper;
+import ClientDTO.Client;
+import ClientMapper.ClientMapper;
 
 @SpringBootApplication
-@MapperScan(basePackages="net.skhu.mapper")
+@MapperScan(basePackages="ClientMapper")
 
 public class MoneyCheck extends JFrame {
 
@@ -45,7 +48,7 @@ public class MoneyCheck extends JFrame {
 
 	 public MoneyCheck() {
 
-	        setTitle("이용시간 체크");
+	        setTitle("이용시간 입력창");
 	        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 	        Container c = getContentPane();
@@ -56,7 +59,7 @@ public class MoneyCheck extends JFrame {
 
 
 
-	        JLabel clientIdLabel = new JLabel("아이디를 입력하세요");
+	        JLabel clientIdLabel = new JLabel("회원 아이디를 입력하세요");
 
 
 	        clientIdLabel.setSize(550,80);
@@ -128,12 +131,13 @@ public class MoneyCheck extends JFrame {
 	        	usehour = hour;
 
 
-	        	Client client = new Client();
+	        	Client client = clientMapper.findByclientId(clientId.getText());  //  입력한 회원아이디로  조회
 
-
-	        	client.setClientId(clientId.getText());
-	            client.setTime(hour);
+	            client.setTime(hour+"시간");
 	            client.setMoney(moneylabel.getText());
+
+	            client.setStartDate("");
+	            client.setEndDate("");
 
 	            clientMapper.update(client);
 	        }
